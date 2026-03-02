@@ -1,3 +1,4 @@
+open util/integer
 module luderia
 
 sig Cliente {}
@@ -42,7 +43,7 @@ fact valorPorJogo {
 }
 
 fact regraMulta {
-    all a: Aluguel | a.valorMulta = (a.valorAluguel / 2) * a.diasDeAtraso
+    all a: Aluguel | a.valorMulta = mul[ div[a.valorAluguel, 2], a.diasDeAtraso]
 }
 
 fact atrasadoNaoAluga {
@@ -53,7 +54,7 @@ fact atrasadoNaoAluga {
 
 sig Reserva {
     cliente: one Cliente,
-    valor: one Int,
+    valorReserva: one Int,
     qtdJogos: one Int,
     duracaoReserva: one Int,
     horaExcedente: one Int,
@@ -64,7 +65,7 @@ fact reservaDeJogos {
     all r: Reserva | r.qtdJogos <= 5
 }
 fact valorReserva {
-    all r: Reserva | r.valor = 15 + (r.horaExcedente * 3)
+    all r: Reserva | r.valorReserva = add[15, mul[r.horaExcedente, 3]]
 }
 
 fact duracaoReserva {
