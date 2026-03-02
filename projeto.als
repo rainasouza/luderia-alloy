@@ -35,11 +35,24 @@ sig Reserva {
     valor: one Int,
     qtdJogos: one Int,
     duracaoReserva: one Int,
+    horaExcedente: one Int,
+    mesa: one Mesa,
 }
 
-fact {
+fact reservaDeJogos{
     all r: Reserva | r.qtdJogos <= 5
-    #duracaoReserva = 4
+}
+fact valorReserva{
+    all r: Reserva | r.valor = 15
 }
 
+fact duracaoReserva {
+    all r: Reserva | r.duracaoReserva = 4 or r.duracaoReserva = 5 or r.duracaoReserva = 6
+}
+fact horaExcedente{ 
+    all r: Reserva | r.horaExcedente = r.duracaoReserva - 4
+}
+fact mesaUnica{
+    all disj r1, r2: Reserva | (r1.mesa = r2.mesa) implies r1 = r2
+}
 run {} for 5
