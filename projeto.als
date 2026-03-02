@@ -77,4 +77,30 @@ fact horaExcedente {
 fact mesaUnica {
     all disj r1, r2: Reserva | (r1.mesa = r2.mesa) implies r1 = r2
 }
+
+// Se um cliente possui algum aluguel com dias de atraso maiores que zero,
+// entao esse cliente nao pode ter nenhum outro aluguel com dias de atraso igual a 0.
+assert clienteAtrasadoNaoAluga {
+	all c: Cliente | (some a: Aluguel | a.cliente = c and a.diasDeAtraso > 0) implies (no b: Aluguel | b.cliente = c and b.diasDeAtraso = 0)
+}
+check clienteAtrasadoNaoAluga for 5
+
+// Toda reserva deve conter no maximo 5 jogos.
+assert limiteJogosReserva {
+	all r: Reserva | r.qtdJogos <= 5
+}
+check limiteJogosReserva for 5
+
+// O valor da multa deve ser um valor maior ou igual a 0.
+assert multaNaoNegativa {
+	all a: Aluguel | a.valorMulta >= 0
+}
+check multaNaoNegativa for 5
+
+// O valor da reserva nunca ultrapassa 21 (15 reais base + (3 reais por hora adicional * 2 horas adicionais))
+assert valorReservaNoMaximo21 {
+	all r: Reserva | r.valorReserva <= 21
+}
+check valorReservaNoMaximo21
+
 run {} for 5
