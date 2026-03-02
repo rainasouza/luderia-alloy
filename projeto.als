@@ -17,3 +17,16 @@ sig Mesa {}
 fact {
     #Mesa = 5    
 }
+
+sig Aluguel {
+        cliente: one Cliente,
+        exemplar: one Exemplar,
+        duracao: one Int,
+        diasDeAtraso: one Int
+    }
+
+    fact duracaoAluguel {
+        all a: Aluguel | a.duracao = 2
+    }
+
+    run {} for 5
