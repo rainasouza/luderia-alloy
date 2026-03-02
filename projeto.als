@@ -22,13 +22,34 @@ sig Aluguel {
     cliente: one Cliente,
     exemplar: one Exemplar,
     duracaoAluguel: one Int,
-    diasDeAtraso: one Int
+    diasDeAtraso: one Int,
+    valorAluguel: one Int,
+    valorMulta: one Int,
 }
 
 fact duracaoAluguel {
     all a: Aluguel | a.duracaoAluguel = 2
 }
 
+fact valoresValidos {
+    all a: Aluguel | a.diasDeAtraso >= 0 and a.valorMulta >= 0
+}
+
+fact valorPorJogo {
+    all a: Aluguel | (a.exemplar.jogo in jogoPequeno implies a.valorAluguel = 15) and 
+    (a.exemplar.jogo in jogoMedio implies a.valorAluguel = 25) and 
+    (a.exemplar.jogo in jogoGrande implies a.valorAluguel = 35)
+}
+
+fact regraMulta {
+    all a: Aluguel | a.valorMulta = (a.valorAluguel / 2) * a.diasDeAtraso
+}
+
+fact atrasadoNaoAluga {
+    all c: Cliente | (some a: Aluguel | a.cliente = c and  a.diasDeAtraso > 0)
+     implies
+    (no b: Aluguel | b.cliente = c and b.diasDeAtraso = 0)
+}
 
 sig Reserva {
     cliente: one Cliente,
@@ -39,20 +60,20 @@ sig Reserva {
     mesa: one Mesa,
 }
 
-fact reservaDeJogos{
+fact reservaDeJogos {
     all r: Reserva | r.qtdJogos <= 5
 }
-fact valorReserva{
-    all r: Reserva | r.valor = 15
+fact valorReserva {
+    all r: Reserva | r.valor = 15 + (r.horaExcedente * 3)
 }
 
 fact duracaoReserva {
     all r: Reserva | r.duracaoReserva = 4 or r.duracaoReserva = 5 or r.duracaoReserva = 6
 }
-fact horaExcedente{ 
+fact horaExcedente { 
     all r: Reserva | r.horaExcedente = r.duracaoReserva - 4
 }
-fact mesaUnica{
+fact mesaUnica {
     all disj r1, r2: Reserva | (r1.mesa = r2.mesa) implies r1 = r2
 }
 run {} for 5
