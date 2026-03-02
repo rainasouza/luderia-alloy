@@ -19,14 +19,27 @@ fact {
 }
 
 sig Aluguel {
-        cliente: one Cliente,
-        exemplar: one Exemplar,
-        duracao: one Int,
-        diasDeAtraso: one Int
-    }
+    cliente: one Cliente,
+    exemplar: one Exemplar,
+    duracaoAluguel: one Int,
+    diasDeAtraso: one Int
+}
 
-    fact duracaoAluguel {
-        all a: Aluguel | a.duracao = 2
-    }
+fact duracaoAluguel {
+    all a: Aluguel | a.duracaoAluguel = 2
+}
 
-    run {} for 5
+
+sig Reserva {
+    cliente: one Cliente,
+    valor: one Int,
+    qtdJogos: one Int,
+    duracaoReserva: one Int,
+}
+
+fact {
+    all r: Reserva | r.qtdJogos <= 5
+    #duracaoReserva = 4
+}
+
+run {} for 5
