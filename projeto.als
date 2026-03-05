@@ -1,6 +1,18 @@
 open util/integer
 module luderia
 
+//Especificações do projeto:
+//Uma luderia quer um sistema para organizar os aluguéis e reservas de jogos. 
+//A luderia pode possuir vários exemplares do mesmo jogo. 
+//Um cliente pode alugar um jogo para levar para casa ou fazer uma reserva para jogar na Luderia em uma determinada data.
+//Todo aluguel deve estar associado a um cliente e um exemplar de jogo, e tem duração de 2 dias. 
+//As reservas dependem da disponibilidade de mesas na Luderia e é possível reservar até 5 jogos, com duração base de 4 horas. 
+//A luderia possui 5 mesas. 
+//Os jogos na luderia podem ser classificados em pequenos, médios e grandes e o valor do aluguel é de 15, 25 e 35 reais, respectivamente, de acordo com o tipo do jogo. 
+//Reservas têm duração base de 4 horas, pelo valor de 15 reais, podendo chegar até 6 horas com adicional de 3 reais a hora. 
+//Um cliente não pode alugar novos jogos enquanto tem uma devolução atrasada. 
+//A multa por atraso é de metade do valor do aluguel original por dia de atraso.
+
 // Clientes da luderia
 sig Cliente {}
 
