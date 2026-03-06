@@ -51,6 +51,12 @@ fact duracaoAluguel {
     all a: Aluguel | a.duracaoAluguel = 2
 }
 
+// Um cliente só pode ter 3 alugueis ativos por vez.
+fact limiteAlugueisCliente {
+    all c: Cliente |
+        #({a: Aluguel | a.cliente = c}) <= 3
+}
+
 // Dias de atraso e multa nao podem ser negativos
 fact valoresValidos {
     all a: Aluguel | a.diasDeAtraso >= 0 and a.valorMulta >= 0
@@ -58,21 +64,23 @@ fact valoresValidos {
 
 // Valor do aluguel depende do tipo do jogo: 15, 25 ou 35 reais
 fact valorPorJogo {
-    all a: Aluguel | (a.exemplar.jogo in jogoPequeno implies a.valorAluguel = 15) and 
-    (a.exemplar.jogo in jogoMedio implies a.valorAluguel = 25) and 
-    (a.exemplar.jogo in jogoGrande implies a.valorAluguel = 35)
+    all a: Aluguel |
+        (a.exemplar.jogo in jogoPequeno and a.valorAluguel = 15) or
+        (a.exemplar.jogo in jogoMedio and a.valorAluguel = 25) or
+        (a.exemplar.jogo in jogoGrande and a.valorAluguel = 35)
 }
 
 // Multa = metade do valor do aluguel multiplicado pelos dias de atraso
 fact regraMulta {
-    all a: Aluguel | a.valorMulta = mul[ div[a.valorAluguel, 2], a.diasDeAtraso]
+    all a: Aluguel | a.valorMulta = mul[div[a.valorAluguel, 2], a.diasDeAtraso]
 }
 
-// Cliente com devolucao atrasada nao pode ter novo aluguel ativo
-fact atrasadoNaoAluga {
-    all c: Cliente | (some a: Aluguel | a.cliente = c and  a.diasDeAtraso > 0)
-     implies
-    (no b: Aluguel | b.cliente = c and b.diasDeAtraso = 0)
+// Cliente com devolucao atrasada nao pode alugar, Se existir pelo menos um aluguel
+// com devolução atrasada, todos os alugueis estão atrasados.
+fact clienteAtrasadoNaoAluga {
+    all c: Cliente | (some a : Aluguel | a.cliente = c and a.diasDeAtraso > 0)
+    implies
+    (all b: Aluguel | b.cliente = c implies b.diasDeAtraso > 0)
 }
 
 // Representa a reserva de uma mesa por um cliente para jogar na luderia
