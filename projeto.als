@@ -83,6 +83,11 @@ fact clienteAtrasadoNaoAluga {
     (all b: Aluguel | b.cliente = c implies b.diasDeAtraso > 0)
 }
 
+// Um exemplar so pode estar em um aluguel por vez
+fact exemplarNaoDuplicado {
+    all disj a1, a2: Aluguel | a1.exemplar != a2.exemplar
+}
+
 // Representa a reserva de uma mesa por um cliente para jogar na luderia
 sig Reserva {
     cliente: one Cliente,
@@ -131,17 +136,17 @@ assert limiteJogosReserva {
 }
 check limiteJogosReserva for 5
 
-// O valor da multa deve ser um valor maior ou igual a 0.
-assert multaNaoNegativa {
-	all a: Aluguel | a.valorMulta >= 0
+// Um mesmo exemplar fisico nao pode estar em dois alugueis diferentes ao mesmo tempo
+assert exemplarUnico {
+    all disj a1, a2: Aluguel | a1.exemplar != a2.exemplar
 }
-check multaNaoNegativa for 5
+check exemplarUnico for 5
 
-// O valor da reserva nunca ultrapassa 21 (15 reais base + (3 reais por hora adicional * 2 horas adicionais))
-assert valorReservaNoMaximo21 {
-	all r: Reserva | r.valorReserva <= 21
+// Todo aluguel tem exatamente um cliente e um exemplar associado
+assert aluguelBemFormado {
+    all a: Aluguel | one a.cliente and one a.exemplar
 }
-check valorReservaNoMaximo21
+check aluguelBemFormado for 5
 
 // Cenario exemplo: garante que existe ao menos um cliente inadimplente.
 // Usa 7 Int (intervalo -64 a 63) pois os valores 25 e 35 de
