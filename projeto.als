@@ -52,6 +52,7 @@ fact duracaoAluguel {
 }
 
 // Um cliente só pode ter 3 alugueis ativos por vez.
+// Nova exigência do cliente.
 fact limiteAlugueisCliente {
     all c: Cliente |
         #({a: Aluguel | a.cliente = c}) <= 3
@@ -78,9 +79,10 @@ fact regraMulta {
 // Cliente com devolucao atrasada nao pode alugar, Se existir pelo menos um aluguel
 // com devolução atrasada, todos os alugueis estão atrasados.
 fact clienteAtrasadoNaoAluga {
-    all c: Cliente | (some a : Aluguel | a.cliente = c and a.diasDeAtraso > 0)
-    implies
-    (all b: Aluguel | b.cliente = c implies b.diasDeAtraso > 0)
+  all c: Cliente |
+        (some a: Aluguel | a.cliente = c and a.diasDeAtraso > 0)
+        implies
+        # { a: Aluguel | a.cliente = c and a.diasDeAtraso = 0 } = 0
 }
 
 // Um exemplar so pode estar em um aluguel por vez
@@ -126,7 +128,10 @@ fact mesaUnica {
 // Se um cliente possui algum aluguel com dias de atraso maiores que zero,
 // entao esse cliente nao pode ter nenhum outro aluguel com dias de atraso igual a 0.
 assert clienteAtrasadoNaoAluga {
-	all c: Cliente | (some a: Aluguel | a.cliente = c and a.diasDeAtraso > 0) implies (no b: Aluguel | b.cliente = c and b.diasDeAtraso = 0)
+    all c: Cliente |
+        (some a: Aluguel | a.cliente = c and a.diasDeAtraso > 0)
+        implies
+        #{ a: Aluguel | a.cliente = c } = 3
 }
 check clienteAtrasadoNaoAluga for 5
 
